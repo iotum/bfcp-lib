@@ -1,13 +1,15 @@
 {
   "name": "bfcp-lib",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "BFCP JavaScript implementation",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Scheffel-V/bfcp-lib.git"
+    "url": "git+https://github.com/jerry2013/bfcp-lib.git"
   },
   "dependencies": {
-    "config": "^1.30.0",
-    "js-yaml": "^3.0.0"
+    "buffer": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^12.0.7"
   }
 }
