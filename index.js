@@ -3,7 +3,23 @@
  * @module bfcp-lib
  */
 
-const Message = {
+const BFCPLib = {
+  'Parser': require('./lib/parser/parser.js'),
+  'Attributes': {
+    'Attribute': require('./lib/attributes/attribute.js'),
+    'BeneficiaryId': require('./lib/attributes/beneficiaryId.js'),
+    'FloorId': require('./lib/attributes/floorId.js'),
+    'FloorRequestId': require('./lib/attributes/floorRequestId.js'),
+    'FloorRequestInformation': require('./lib/attributes/floorRequestInformation.js'),
+    'FloorRequestStatusAtr': require('./lib/attributes/floorRequestStatus.js'),
+    'Format': require('./lib/attributes/format.js'),
+    'Length': require('./lib/attributes/length.js'),
+    'Name': require('./lib/attributes/name.js'),
+    'RequestStatus': require('./lib/attributes/requestStatus.js'),
+    'SupportedAttributes': require('./lib/attributes/supportedAttributes.js'),
+    'SupportedPrimitives': require('./lib/attributes/supportedPrimitives.js'),
+    'Type': require('./lib/attributes/type.js'),
+  },
   'CommonHeader': require('./lib/messages/commonHeader.js'),
   'FloorQuery': require('./lib/messages/floorQuery.js'),
   'FloorRelease': require('./lib/messages/floorRelease.js'),
@@ -18,28 +34,6 @@ const Message = {
   'PayloadLength': require('./lib/messages/payloadLength.js'),
   'Primitive': require('./lib/messages/primitive.js'),
   'RequestStatusValue': require('./lib/messages/requestStatusValue.js'),
-};
-
-const Attribute = {
-  'Attribute': require('./lib/attributes/attribute.js'),
-  'BeneficiaryId': require('./lib/attributes/beneficiaryId.js'),
-  'FloorId': require('./lib/attributes/floorId.js'),
-  'FloorRequestId': require('./lib/attributes/floorRequestId.js'),
-  'FloorRequestInformation': require('./lib/attributes/floorRequestInformation.js'),
-  'FloorRequestStatusAtr': require('./lib/attributes/floorRequestStatus.js'),
-  'Format': require('./lib/attributes/format.js'),
-  'Length': require('./lib/attributes/length.js'),
-  'Name': require('./lib/attributes/name.js'),
-  'RequestStatus': require('./lib/attributes/requestStatus.js'),
-  'SupportedAttributes': require('./lib/attributes/supportedAttributes.js'),
-  'SupportedPrimitives': require('./lib/attributes/supportedPrimitives.js'),
-  'Type': require('./lib/attributes/type.js'),
-};
-
-const BFCPLib = {
-  'Parser': require('./lib/parser/parser.js'),
-  'Message': Message,
-  'Attribute': Attribute,
 }
 
 module.exports = BFCPLib;
