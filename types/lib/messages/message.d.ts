@@ -220,8 +220,9 @@ export declare class FloorRequestStatusAck extends Message {
      * @param conferenceId   The conference id
      * @param transactionId  The transaction id
      * @param userId         The user id
+     * @param floorId        The floor id
      */
-    constructor(conferenceId: number, transactionId: number, userId: number);
+    constructor(conferenceId: number, transactionId: number, userId: number, floorId: number);
 }
 /**
  * ErrorAck Message
@@ -246,8 +247,9 @@ export declare class FloorStatusAck extends Message {
      * @param conferenceId   The conference id
      * @param transactionId  The transaction id
      * @param userId         The user id
+     * @param floorId        The floor id
      */
-    constructor(conferenceId: number, transactionId: number, userId: number);
+    constructor(conferenceId: number, transactionId: number, userId: number, floorId: number);
 }
 /**
  * Goodbye Message

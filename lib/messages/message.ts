@@ -424,10 +424,14 @@ export class FloorRequestStatusAck extends Message {
    * @param conferenceId   The conference id
    * @param transactionId  The transaction id
    * @param userId         The user id
+   * @param floorId        The floor id
    */
-  constructor(conferenceId: number, transactionId: number, userId: number) {
+  constructor(conferenceId: number, transactionId: number, userId: number, floorId: number) {
     super(
       new CommonHeader(Primitive.FloorRequestStatusAck, conferenceId, transactionId, userId),
+      [
+        new FloorId(floorId),
+      ],
     );
     this.commonHeader.responderFlag = true;
   }
@@ -462,10 +466,14 @@ export class FloorStatusAck extends Message {
    * @param conferenceId   The conference id
    * @param transactionId  The transaction id
    * @param userId         The user id
+   * @param floorId        The floor id
    */
-  constructor(conferenceId: number, transactionId: number, userId: number) {
+  constructor(conferenceId: number, transactionId: number, userId: number, floorId: number) {
     super(
       new CommonHeader(Primitive.FloorStatusAck, conferenceId, transactionId, userId),
+      [
+        new FloorId(floorId),
+      ],
     );
     this.commonHeader.responderFlag = true;
   }
