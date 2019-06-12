@@ -35,8 +35,10 @@ export declare enum Primitive {
     Error = 13,
     /** Gets FloorRequestStatusAck Primitive */
     FloorRequestStatusAck = 14,
+    /** Gets ErrorAck Primitive */
+    ErrorAck = 15,
     /** Gets FloorStatusAck Primitive */
-    FloorStatusAck = 15,
+    FloorStatusAck = 16,
     /** Gets Goodbye Primitive */
     Goodbye = 17,
     /** Gets GoodbyeAck Primitive */

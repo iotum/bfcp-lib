@@ -14,6 +14,7 @@ declare type Content = number | string | Array<number | string | Attribute>;
  */
 export declare abstract class Attribute {
     private _type;
+    private _mandatory;
     private _length;
     private _format;
     private _content;
@@ -24,10 +25,11 @@ export declare abstract class Attribute {
      * @param content The attribute content, which can be an Integer, or other attributes, depending of the format
      */
     constructor(type: Type, length: number, format: Format, content: Content);
-    type: Type;
+    type: number;
     length: number;
     format: Format;
     content: Content;
+    mandatory: boolean;
     /**
      * Encodes this Attribute instance from object oriented format to the binary
      * format.
@@ -67,6 +69,7 @@ export declare class BeneficiaryId extends Attribute {
      * @param beneficiaryId The beneficiary id integer
      */
     constructor(beneficiaryId: number);
+    readonly beneficiaryId: Content;
 }
 /**
  * FloorId class is an abstraction of the FloorId attribute
@@ -81,6 +84,7 @@ export declare class FloorId extends Attribute {
      * @param floorId The floor id
      */
     constructor(floorId: number);
+    readonly floorId: Content;
 }
 /**
  * FloorRequestId class is an abstraction of the FloorRequestId attribute
@@ -95,10 +99,12 @@ export declare class FloorRequestId extends Attribute {
      * @param floorRequestId The floor request id
      */
     constructor(floorRequestId: number);
+    readonly floorRequestId: Content;
 }
 export declare class Priority extends Attribute {
     static decode(data: Uint8Array): Priority;
     constructor(priority: RequestPriority);
+    readonly floorId: Content;
 }
 /**
  * RequestStatus class is an abstraction of the RequestStatus attribute as
@@ -114,6 +120,8 @@ export declare class RequestStatus extends Attribute {
      * @param queuePosition The queue position
      */
     constructor(requestStatus: RequestStatusValue, queuePosition?: number);
+    readonly requestStatus: string | number | Attribute;
+    readonly queuePosition: string | number | Attribute;
 }
 /**
  * ErrorCode class is an abstraction of the ErrorCode attribute
@@ -128,26 +136,32 @@ export declare class ErrorCode extends Attribute {
      * @param errorCode The error code
      */
     constructor(errorCode: Err, errorInfo?: string);
+    readonly errorCode: string | number | Attribute;
 }
 export declare class ErrorInfo extends Attribute {
     static decode(data: Uint8Array): ErrorInfo;
     constructor(errorInfo: string);
+    readonly errorInfo: Content;
 }
 export declare class ParticipantProvidedInfo extends Attribute {
     static decode(data: Uint8Array): ParticipantProvidedInfo;
     constructor(partProviderInfo: string);
+    readonly partProviderInfo: Content;
 }
 export declare class StatusInfo extends Attribute {
     static decode(data: Uint8Array): StatusInfo;
     constructor(statusInfo: string);
+    readonly statusInfo: Content;
 }
 export declare class UserDisplayName extends Attribute {
     static decode(data: Uint8Array): UserDisplayName;
     constructor(userDisplayName: string);
+    readonly userDisplayName: Content;
 }
 export declare class UserUri extends Attribute {
     static decode(data: Uint8Array): UserUri;
     constructor(userUri: string);
+    readonly userUri: Content;
 }
 /**
  * The BENEFICIARY-INFORMATION attribute is a grouped attribute that
@@ -158,6 +172,7 @@ export declare class UserUri extends Attribute {
 export declare class BeneficiaryInformation extends Attribute {
     static decode(data: Uint8Array): BeneficiaryInformation;
     constructor(beneficiaryId: number, attributes?: Attribute[]);
+    readonly beneficiaryId: string | number | Attribute;
 }
 /**
  * The FLOOR-REQUEST-INFORMATION attribute is a grouped attribute that
@@ -173,6 +188,7 @@ export declare class FloorRequestInformation extends Attribute {
      * @param requestStatus  The request status
      */
     constructor(floorRequestId: number, attributes?: Attribute[]);
+    readonly floorRequestId: string | number | Attribute;
 }
 /**
  * The REQUESTED-BY-INFORMATION attribute is a grouped attribute that
@@ -181,6 +197,7 @@ export declare class FloorRequestInformation extends Attribute {
 export declare class RequestedByInformation extends Attribute {
     static decode(data: Uint8Array): RequestedByInformation;
     constructor(requestedById: number, attributes?: Attribute[]);
+    readonly requestedById: string | number | Attribute;
 }
 /**
  * The FLOOR-REQUEST-STATUS attribute is a grouped attribute that
@@ -195,6 +212,7 @@ export declare class FloorRequestStatus extends Attribute {
      * @param requestStatus The request status
      */
     constructor(floorId: number, attributes?: Attribute[]);
+    readonly floorId: string | number | Attribute;
 }
 /**
  * The OVERALL-REQUEST-STATUS attribute is a grouped attribute that
@@ -208,6 +226,7 @@ export declare class OverallRequestStatus extends Attribute {
      * @param floorRequestId The request status
      */
     constructor(floorRequestId: number, attributes?: Attribute[]);
+    readonly floorRequestId: string | number | Attribute;
 }
 /**
  * SupportedAttributes class is an abstraction of the SupportedAttributes
@@ -223,6 +242,7 @@ export declare class SupportedAttributes extends Attribute {
      * representing the supported attributes
      */
     constructor(attributes?: Type[]);
+    readonly suportedAttributes: (string | number | Attribute)[];
 }
 /**
  * SupportedPrimitives class is an abstraction of the SupportedPrimitives
@@ -238,5 +258,6 @@ export declare class SupportedPrimitives extends Attribute {
      * representing the supported primitives (messages)
      */
     constructor(primitives?: Primitive[]);
+    readonly supportedPrimitives: (string | number | Attribute)[];
 }
 export {};

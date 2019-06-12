@@ -24,12 +24,12 @@ import { Primitive } from "./primitive";
  * @memberof Message
  */
 export class CommonHeader {
-  public _primitive: Primitive;
-  public _payloadLength = 0;
-  public _conferenceId: number;
-  public _transactionId: number;
-  public _userId: number;
-  public _responder = false;
+  private _primitive: Primitive;
+  private _payloadLength = 0;
+  private _conferenceId: number;
+  private _transactionId: number;
+  private _userId: number;
+  private _responder = false;
 
   /**
    * @constructor
@@ -48,42 +48,48 @@ export class CommonHeader {
     this._userId = userId;
   }
 
-  get primitive(): Primitive {
+  /** The Message Primitive */
+  get primitive() {
     return this._primitive;
   }
   set primitive(primitive) {
     this._primitive = primitive;
   }
 
-  get payloadLength(): number {
+  /** The length of the message in 4-octet, excluding the CommonHeader */
+  get payloadLength() {
     return this._payloadLength;
   }
   set payloadLength(payloadLength) {
     this._payloadLength = payloadLength;
   }
 
-  get conferenceId(): number {
+  /** The conference id */
+  get conferenceId() {
     return this._conferenceId;
   }
   set conferenceId(conferenceId) {
     this._conferenceId = conferenceId;
   }
 
-  get transactionId(): number {
+  /** The transaction id */
+  get transactionId() {
     return this._transactionId;
   }
   set transactionId(transactionId) {
     this._transactionId = transactionId;
   }
 
-  get userId(): number {
+  /** The user id */
+  get userId() {
     return this._userId;
   }
   set userId(userId) {
     this._userId = userId;
   }
 
-  get responderFlag(): boolean {
+  /** The responder flag */
+  get responderFlag() {
     return this._responder;
   }
   set responderFlag(responder) {

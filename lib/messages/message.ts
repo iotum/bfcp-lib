@@ -5,6 +5,7 @@ import {
 } from "../attributes/attribute";
 import { Error as Err } from "../attributes/error";
 import { Name } from "../attributes/name";
+import { Type } from "../attributes/type";
 import { CommonHeader } from "./commonHeader";
 import { Primitive } from "./primitive";
 import { RequestStatusValue } from "./requestStatusValue";
@@ -91,6 +92,9 @@ export class Message {
     for (let i = 0; i < size; i++) {
       octets.push(parseInt(message.substring(0 + 8 * i, 8 + 8 * i), 2));
     }
+
+    // padding to DWORD
+    Array(octets.length % 4).fill(0).forEach(() => octets.push(0));
     return octets;
   }
 }
@@ -108,11 +112,14 @@ export class FloorRequest extends Message {
    * @param floorId        The floor id
    * @param beneficiaryId  The beneficiary id (optional)
    */
-  constructor(conferenceId: number, transactionId: number, userId: number, floorIds: number[] = []) {
+  constructor(conferenceId: number, transactionId: number, userId: number, floorIds: number | number[]) {
     super(
       new CommonHeader(Primitive.FloorRequest, conferenceId, transactionId, userId),
     );
 
+    if (!(floorIds instanceof Array)) {
+      floorIds = [floorIds];
+    }
     for (const floorId of floorIds) {
       this.addAttribute(new FloorId(floorId));
     }
@@ -271,19 +278,27 @@ export class UserStatus extends Message {
  */
 export class FloorQuery extends Message {
   /**
+   * The client inserts in the message all the Floor IDs it wants to
+   * receive information about.  The floor control server will send
+   * periodic information about all of these floors.  If the client does
+   * not want to receive information about a particular floor any longer,
+   * it sends a new FloorQuery message removing the FLOOR-ID of this
+   * floor.  If the client does not want to receive information about any
+   * floor any longer, it sends a FloorQuery message with no FLOOR-ID
+   * attribute.
    * @constructor
    * @param conferenceId   The conference id
    * @param transactionId  The transaction id
    * @param userId         The user id
    * @param floorId        The floor id
    */
-  constructor(conferenceId: number, transactionId: number, userId: number, floorId: number) {
+  constructor(conferenceId: number, transactionId: number, userId: number, floorId?: number) {
     super(
       new CommonHeader(Primitive.FloorQuery, conferenceId, transactionId, userId),
-      [
-        new FloorId(floorId),
-      ],
     );
+    if (floorId) {
+      this.addAttribute(new FloorId(floorId));
+    }
   }
 }
 
@@ -343,13 +358,13 @@ export class Hello extends Message {
    * @param userId        The user id
    * @param floorId       The floor id
    */
-  constructor(conferenceId: number, transactionId: number, userId: number, floorId?: number) {
+  constructor(conferenceId: number, transactionId: number, userId: number, floorId: number) {
     super(
       new CommonHeader(Primitive.Hello, conferenceId, transactionId, userId),
+      [
+        new FloorId(floorId),
+      ],
     );
-    if (floorId) {
-      this.addAttribute(new FloorId(floorId));
-    }
   }
 }
 
@@ -431,7 +446,7 @@ export class ErrorAck extends Message {
    */
   constructor(conferenceId: number, transactionId: number, userId: number) {
     super(
-      new CommonHeader(Primitive.FloorRequestStatusAck, conferenceId, transactionId, userId),
+      new CommonHeader(Primitive.ErrorAck, conferenceId, transactionId, userId),
     );
     this.commonHeader.responderFlag = true;
   }

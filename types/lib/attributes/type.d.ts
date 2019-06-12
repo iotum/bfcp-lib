@@ -22,7 +22,7 @@ export declare enum Type {
     /** Gets StatusInfo Type */
     StatusInfo = 9,
     /** Gets SupportedAttributes Type */
-    SupportedAttributes = 0,
+    SupportedAttributes = 10,
     /** Gets SupportedPrimitives Type */
     SupportedPrimitives = 11,
     /** Gets UserDisplayName Type */

@@ -19,6 +19,7 @@ type Content = number | string | Array<number | string | Attribute>;
  */
 export abstract class Attribute {
   private _type: number;
+  private _mandatory = true;
   private _length: number;
   private _format: Format;
   private _content: Content;
@@ -41,7 +42,7 @@ export abstract class Attribute {
     this._content = content;
   }
 
-  get type(): Type {
+  get type() {
     return this._type;
   }
 
@@ -49,7 +50,7 @@ export abstract class Attribute {
     this._type = type;
   }
 
-  get length(): number {
+  get length() {
     return this._length;
   }
 
@@ -57,7 +58,7 @@ export abstract class Attribute {
     this._length = length;
   }
 
-  get format(): Format {
+  get format() {
     return this._format;
   }
 
@@ -65,12 +66,20 @@ export abstract class Attribute {
     this._format = format;
   }
 
-  get content(): Content {
+  get content() {
     return this._content;
   }
 
   set content(content) {
     this._content = content;
+  }
+
+  get mandatory() {
+    return this._mandatory;
+  }
+
+  set mandatory(mandatary: boolean) {
+    this._mandatory = mandatary;
   }
 
   /**
@@ -81,7 +90,7 @@ export abstract class Attribute {
    */
   public encode(): string {
     const type = Complements.complementBinary(this.type, 7);
-    const mandatary = "0";
+    const mandatary = this.mandatory ? "1" : "0";
     const length = Complements.complementBinary(this.length, 8);
     let content = null;
 
@@ -196,6 +205,10 @@ export class BeneficiaryId extends Attribute {
   constructor(beneficiaryId: number) {
     super(Type.BeneficiaryId, 2 + ATTRIBUTE_HEADER_SIZE, Format.Unsigned16, beneficiaryId);
   }
+
+  public get beneficiaryId() {
+    return this.content;
+  }
 }
 
 /**
@@ -217,6 +230,10 @@ export class FloorId extends Attribute {
    */
   constructor(floorId: number) {
     super(Type.FloorId, 2 + ATTRIBUTE_HEADER_SIZE, Format.Unsigned16, floorId);
+  }
+
+  public get floorId() {
+    return this.content;
   }
 }
 
@@ -240,6 +257,10 @@ export class FloorRequestId extends Attribute {
   constructor(floorRequestId: number) {
     super(Type.FloorRequestId, 2 + ATTRIBUTE_HEADER_SIZE, Format.Unsigned16, floorRequestId);
   }
+
+  public get floorRequestId() {
+    return this.content;
+  }
 }
 
 export class Priority extends Attribute {
@@ -251,6 +272,10 @@ export class Priority extends Attribute {
 
   constructor(priority: RequestPriority) {
     super(Type.Priority, 2 + ATTRIBUTE_HEADER_SIZE, Format.Unsigned16, priority);
+  }
+
+  public get floorId() {
+    return this.content;
   }
 }
 
@@ -280,6 +305,18 @@ export class RequestStatus extends Attribute {
     ];
 
     super(Type.RequestStatus, 1 + 1 + ATTRIBUTE_HEADER_SIZE, Format.OctetString16, content);
+  }
+
+  public get requestStatus() {
+    if (this.content instanceof Array) {
+      return this.content[0];
+    }
+  }
+
+  public get queuePosition() {
+    if (this.content instanceof Array) {
+      return this.content[1];
+    }
   }
 }
 
@@ -313,6 +350,12 @@ export class ErrorCode extends Attribute {
     }
     super(Type.ErrorCode, 1 + (errorInfo ? errorInfo.length : 0) + ATTRIBUTE_HEADER_SIZE, Format.Grouped, content);
   }
+
+  public get errorCode() {
+    if (this.content instanceof Array) {
+      return this.content[0];
+    }
+  }
 }
 
 /* string attributes */
@@ -325,6 +368,10 @@ export class ErrorInfo extends Attribute {
   constructor(errorInfo: string) {
     super(Type.ErrorInfo, errorInfo.length + ATTRIBUTE_HEADER_SIZE, Format.Grouped, [errorInfo]);
   }
+
+  public get errorInfo() {
+    return this.content;
+  }
 }
 
 export class ParticipantProvidedInfo extends Attribute {
@@ -334,6 +381,10 @@ export class ParticipantProvidedInfo extends Attribute {
 
   constructor(partProviderInfo: string) {
     super(Type.ErrorInfo, partProviderInfo.length + ATTRIBUTE_HEADER_SIZE, Format.Grouped, [partProviderInfo]);
+  }
+
+  public get partProviderInfo() {
+    return this.content;
   }
 }
 
@@ -345,6 +396,10 @@ export class StatusInfo extends Attribute {
   constructor(statusInfo: string) {
     super(Type.ErrorInfo, statusInfo.length + ATTRIBUTE_HEADER_SIZE, Format.Grouped, [statusInfo]);
   }
+
+  public get statusInfo() {
+    return this.content;
+  }
 }
 
 export class UserDisplayName extends Attribute {
@@ -355,6 +410,10 @@ export class UserDisplayName extends Attribute {
   constructor(userDisplayName: string) {
     super(Type.ErrorInfo, userDisplayName.length + ATTRIBUTE_HEADER_SIZE, Format.Grouped, [userDisplayName]);
   }
+
+  public get userDisplayName() {
+    return this.content;
+  }
 }
 
 export class UserUri extends Attribute {
@@ -364,6 +423,10 @@ export class UserUri extends Attribute {
 
   constructor(userUri: string) {
     super(Type.ErrorInfo, userUri.length + ATTRIBUTE_HEADER_SIZE, Format.Grouped, [userUri]);
+  }
+
+  public get userUri() {
+    return this.content;
   }
 }
 
@@ -387,6 +450,12 @@ export class BeneficiaryInformation extends Attribute {
     content.push(beneficiaryId);
     content.push(...attributes);
     super(Type.BeneficiaryInformation, 2 + sumLengths(attributes) + ATTRIBUTE_HEADER_SIZE, Format.Grouped, content);
+  }
+
+  public get beneficiaryId() {
+    if (this.content instanceof Array) {
+      return this.content[0];
+    }
   }
 }
 
@@ -414,6 +483,12 @@ export class FloorRequestInformation extends Attribute {
     content.push(...attributes);
     super(Type.FloorRequestInformation, 2 + sumLengths(attributes) + ATTRIBUTE_HEADER_SIZE, Format.Grouped, content);
   }
+
+  public get floorRequestId() {
+    if (this.content instanceof Array) {
+      return this.content[0];
+    }
+  }
 }
 
 /**
@@ -432,6 +507,12 @@ export class RequestedByInformation extends Attribute {
     content.push(requestedById);
     content.push(...attributes);
     super(Type.RequestedByInformation, 2 + sumLengths(attributes) + ATTRIBUTE_HEADER_SIZE, Format.Grouped, content);
+  }
+
+  public get requestedById() {
+    if (this.content instanceof Array) {
+      return this.content[0];
+    }
   }
 }
 
@@ -458,6 +539,12 @@ export class FloorRequestStatus extends Attribute {
     content.push(...attributes);
     super(Type.FloorRequestStatus, 2 + sumLengths(attributes) + ATTRIBUTE_HEADER_SIZE, Format.Grouped, content);
   }
+
+  public get floorId() {
+    if (this.content instanceof Array) {
+      return this.content[0];
+    }
+  }
 }
 
 /**
@@ -481,6 +568,12 @@ export class OverallRequestStatus extends Attribute {
     content.push(floorRequestId);
     content.push(...attributes);
     super(Type.OverallRequestStatus, 2 + sumLengths(attributes) + ATTRIBUTE_HEADER_SIZE, Format.Grouped, content);
+  }
+
+  public get floorRequestId() {
+    if (this.content instanceof Array) {
+      return this.content[0];
+    }
   }
 }
 
@@ -513,14 +606,33 @@ export class SupportedAttributes extends Attribute {
         Type.BeneficiaryId,
         Type.FloorId,
         Type.FloorRequestId,
-        Type.SupportedPrimitives,
+        // Type.Priority,
+        Type.RequestStatus,
+        // Type.ErrorCode,
+        // Type.ErrorInfo,
+        // Type.ParticipantProvidedInfo,
+        // Type.StatusInfo,
         Type.SupportedAttributes,
+        Type.SupportedPrimitives,
+        // Type.UserDisplayName,
+        // Type.UserUri,
+        // Type.BeneficiaryInformation,
+        // Type.FloorRequestInformation,
+        // Type.RequestedByInformation,
+        Type.FloorRequestStatus,
+        Type.OverallRequestStatus,
       ];
     } else {
       supported = attributes;
     }
 
-    super(Type.SupportedAttributes, 1 + supported.length * 1 + ATTRIBUTE_HEADER_SIZE, Format.OctetString, supported);
+    super(Type.SupportedAttributes, supported.length * 1 + ATTRIBUTE_HEADER_SIZE, Format.OctetString, supported);
+  }
+
+  public get suportedAttributes() {
+    if (this.content instanceof Array) {
+      return [...this.content];
+    }
   }
 }
 
@@ -548,17 +660,40 @@ export class SupportedPrimitives extends Attribute {
     let supported: Primitive[] = [];
     if (!primitives) {
       supported = [
+        Primitive.FloorRequest,
+        Primitive.FloorRelease,
+        // Primitive.FloorRequestQuery,
+        // Primitive.FloorRequestStatus,
+        // Primitive.UserQuery,
+        // Primitive.UserStatus,
+        Primitive.FloorQuery,
+        Primitive.FloorStatus,
         Primitive.Hello,
         Primitive.HelloAck,
+        // Primitive.Error,
+        // Primitive.FloorRequestStatusAck,
+        // Primitive.ErrorAck,
+        Primitive.FloorStatusAck,
+        Primitive.Goodbye,
+        Primitive.GoodbyeAck,
       ];
     } else {
       supported = primitives;
     }
 
-    super(Type.SupportedPrimitives, 1 + supported.length * 1 + ATTRIBUTE_HEADER_SIZE, Format.OctetString, supported);
+    super(Type.SupportedPrimitives, supported.length * 1 + ATTRIBUTE_HEADER_SIZE, Format.OctetString, supported);
+  }
+
+  public get supportedPrimitives() {
+    if (this.content instanceof Array) {
+      return [...this.content];
+    }
   }
 }
 
 function sumLengths(attributes: Attribute[]) {
+  if (attributes.length === 0) {
+    return 0;
+  }
   return attributes.map((a) => a.length).reduce((acc, val) => acc + val);
 }

@@ -2,9 +2,10 @@ import * as ATTR from "../attributes/attribute";
 import { Type } from "../attributes/type";
 import { CommonHeader } from "../messages/commonHeader";
 import {
-  Error as ErrorMsg, FloorQuery, FloorRelease, FloorRequest, FloorRequestStatus as FloorRequestStatusMsg,
-  FloorRequestStatusAck, FloorStatus, FloorStatusAck, Goodbye,
-  GoodbyeAck, Hello, HelloAck, Message, MESSAGE_HEADER_SIZE,
+  Error as ErrorMsg, ErrorAck, FloorQuery, FloorRelease, FloorRequest,
+  FloorRequestStatus as FloorRequestStatusMsg, FloorRequestStatusAck,
+  FloorStatus, FloorStatusAck, Goodbye, GoodbyeAck,
+  Hello, HelloAck, Message, MESSAGE_HEADER_SIZE,
 } from "../messages/message";
 import { Primitive } from "../messages/primitive";
 import * as Complements from "../parser/complements";
@@ -81,15 +82,20 @@ export function parseMessage(message: Uint8Array): Message {
       case Primitive.Error:
         return new Message(commonHeader, attributes) as ErrorMsg;
 
+      case Primitive.ErrorAck:
+        return new Message(commonHeader, attributes) as ErrorAck;
+
       case Primitive.UserQuery:
       case Primitive.UserStatus:
       case Primitive.ChairAction:
       case Primitive.ChairActionAck:
       case Primitive.FloorRequestQuery:
-        throw new Error("Unsupported primitive.");
+        // throw new Error("Unsupported primitive.");
+        return new Message(commonHeader, attributes);
 
       default:
-        throw new Error("I can't decode this message. Unknown primitive.");
+        // throw new Error("I can't decode this message. Unknown primitive.");
+        return new Message(commonHeader, attributes);
     }
   } catch (error) {
     throw error;
@@ -126,7 +132,7 @@ function parseCommonHeader(header: Uint8Array) {
   pos += 2;
 
   const cm = new CommonHeader(primitive, conferenceId, transactionId, userId);
-  cm.payloadLength = payloadLength;
+  // cm.payloadLength = payloadLength; // counter via adding attribute
   cm.responderFlag = responder;
   return cm;
 }
@@ -142,80 +148,86 @@ export function parseAttributes(body: Uint8Array) {
     // attribute header
     const attrHeader = getBinary(body, pos, ATTR.ATTRIBUTE_HEADER_SIZE);
     const type: Type = parseInt(attrHeader.substr(0, 7), 2);
-    const mandatory = attrHeader[8] === "1";
+    const mandatory = attrHeader[7] === "1";
     const length = parseInt(attrHeader.substr(8, 8), 2);
-    pos += ATTR.ATTRIBUTE_HEADER_SIZE;
 
-    const attrBody = body.slice(pos, length - 1 - ATTR.ATTRIBUTE_HEADER_SIZE);
-    pos += attrBody.length;
+    const attrBody = body.slice(pos + ATTR.ATTRIBUTE_HEADER_SIZE, pos + length);
+    pos += ATTR.ATTRIBUTE_HEADER_SIZE + attrBody.length;
 
+    let attribute: ATTR.Attribute;
     switch (type) {
       case Type.BeneficiaryId:
-        attributes.push(ATTR.BeneficiaryId.decode(attrBody));
+        attribute = ATTR.BeneficiaryId.decode(attrBody);
         break;
       case Type.FloorId:
-        attributes.push(ATTR.FloorId.decode(attrBody));
+        attribute = ATTR.FloorId.decode(attrBody);
         break;
       case Type.FloorRequestId:
-        attributes.push(ATTR.FloorRequestId.decode(attrBody));
+        attribute = ATTR.FloorRequestId.decode(attrBody);
         break;
 
       case Type.Priority:
-        attributes.push(ATTR.Priority.decode(attrBody));
+        attribute = ATTR.Priority.decode(attrBody);
         break;
 
       case Type.RequestStatus:
-        attributes.push(ATTR.RequestStatus.decode(attrBody));
+        attribute = ATTR.RequestStatus.decode(attrBody);
         break;
 
       case Type.ErrorCode:
-        attributes.push(ATTR.ErrorCode.decode(attrBody));
+        attribute = ATTR.ErrorCode.decode(attrBody);
         break;
 
       /* string attributes */
       case Type.ErrorInfo:
-        attributes.push(ATTR.ErrorInfo.decode(attrBody));
+        attribute = ATTR.ErrorInfo.decode(attrBody);
         break;
       case Type.ParticipantProvidedInfo:
-        attributes.push(ATTR.ParticipantProvidedInfo.decode(attrBody));
+        attribute = ATTR.ParticipantProvidedInfo.decode(attrBody);
         break;
       case Type.StatusInfo:
-        attributes.push(ATTR.StatusInfo.decode(attrBody));
+        attribute = ATTR.StatusInfo.decode(attrBody);
         break;
       case Type.UserDisplayName:
-        attributes.push(ATTR.UserDisplayName.decode(attrBody));
+        attribute = ATTR.UserDisplayName.decode(attrBody);
         break;
       case Type.UserUri:
-        attributes.push(ATTR.StatusInfo.decode(attrBody));
+        attribute = ATTR.StatusInfo.decode(attrBody);
         break;
 
       case Type.SupportedAttributes:
-        attributes.push(ATTR.SupportedAttributes.decode(attrBody));
+        attribute = ATTR.SupportedAttributes.decode(attrBody);
         break;
 
       case Type.SupportedPrimitives:
-        attributes.push(ATTR.SupportedPrimitives.decode(attrBody));
+        attribute = ATTR.SupportedPrimitives.decode(attrBody);
         break;
 
       /* grouped attributes */
       case Type.BeneficiaryInformation: // beneficiary-id
-        attributes.push(ATTR.BeneficiaryInformation.decode(attrBody));
+        attribute = ATTR.BeneficiaryInformation.decode(attrBody);
         break;
       case Type.FloorRequestInformation: // floor-request-id
-        attributes.push(ATTR.FloorRequestInformation.decode(attrBody));
+        attribute = ATTR.FloorRequestInformation.decode(attrBody);
         break;
       case Type.RequestedByInformation: // requested-by-id
-        attributes.push(ATTR.RequestedByInformation.decode(attrBody));
+        attribute = ATTR.RequestedByInformation.decode(attrBody);
         break;
       case Type.FloorRequestStatus: // floor-id
-        attributes.push(ATTR.FloorRequestStatus.decode(attrBody));
+        attribute = ATTR.FloorRequestStatus.decode(attrBody);
         break;
       case Type.OverallRequestStatus: // floor-request-id
-        attributes.push(ATTR.OverallRequestStatus.decode(attrBody));
+        attribute = ATTR.OverallRequestStatus.decode(attrBody);
         break;
 
       default:
-        throw new Error("I cant parse this attribute!");
+        // throw new Error("I cant parse this attribute!");
+        break;
+    }
+
+    if (attribute) {
+      attribute.mandatory = mandatory;
+      attributes.push(attribute);
     }
 
     // DWORD padding

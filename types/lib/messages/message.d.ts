@@ -52,7 +52,7 @@ export declare class FloorRequest extends Message {
      * @param floorId        The floor id
      * @param beneficiaryId  The beneficiary id (optional)
      */
-    constructor(conferenceId: number, transactionId: number, userId: number, floorIds?: number[]);
+    constructor(conferenceId: number, transactionId: number, userId: number, floorIds: number | number[]);
 }
 /**
  * FloorRelease Message as defined in the RFC 4582 - BFCP
@@ -135,13 +135,21 @@ export declare class UserStatus extends Message {
  */
 export declare class FloorQuery extends Message {
     /**
+     * The client inserts in the message all the Floor IDs it wants to
+     * receive information about.  The floor control server will send
+     * periodic information about all of these floors.  If the client does
+     * not want to receive information about a particular floor any longer,
+     * it sends a new FloorQuery message removing the FLOOR-ID of this
+     * floor.  If the client does not want to receive information about any
+     * floor any longer, it sends a FloorQuery message with no FLOOR-ID
+     * attribute.
      * @constructor
      * @param conferenceId   The conference id
      * @param transactionId  The transaction id
      * @param userId         The user id
      * @param floorId        The floor id
      */
-    constructor(conferenceId: number, transactionId: number, userId: number, floorId: number);
+    constructor(conferenceId: number, transactionId: number, userId: number, floorId?: number);
 }
 /**
  * FloorStatus Message
@@ -173,7 +181,7 @@ export declare class Hello extends Message {
      * @param userId        The user id
      * @param floorId       The floor id
      */
-    constructor(conferenceId: number, transactionId: number, userId: number, floorId?: number);
+    constructor(conferenceId: number, transactionId: number, userId: number, floorId: number);
 }
 /**
  * HelloAck Message as defined in the RFC 4582 - BFCP

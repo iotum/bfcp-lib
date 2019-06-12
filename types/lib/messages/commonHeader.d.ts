@@ -7,12 +7,12 @@ import { Primitive } from "./primitive";
  * @memberof Message
  */
 export declare class CommonHeader {
-    _primitive: Primitive;
-    _payloadLength: number;
-    _conferenceId: number;
-    _transactionId: number;
-    _userId: number;
-    _responder: boolean;
+    private _primitive;
+    private _payloadLength;
+    private _conferenceId;
+    private _transactionId;
+    private _userId;
+    private _responder;
     /**
      * @constructor
      * @param primitive     The Message Primitive
@@ -23,11 +23,17 @@ export declare class CommonHeader {
      * @param isResponse    The responder flag
      */
     constructor(primitive: Primitive, conferenceId: number, transactionId: number, userId: number);
+    /** The Message Primitive */
     primitive: Primitive;
+    /** The length of the message in 4-octet, excluding the CommonHeader */
     payloadLength: number;
+    /** The conference id */
     conferenceId: number;
+    /** The transaction id */
     transactionId: number;
+    /** The user id */
     userId: number;
+    /** The responder flag */
     responderFlag: boolean;
     /**
      * Encodes this CommonHeader instance from object oriented format to the
