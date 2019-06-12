@@ -17,10 +17,10 @@ know anything about the codification and decodification of BFCP messages.
 ```javascript
 const dgram = require('dgram');
 const BFCPLib = require('./index.js');
-const BFCPUser = BFCPLib.User;
-const Primitive = BFCPLib.Primitive;
-const AttributeName = BFCPLib.AttributeName;
-const RequestStatusValue = BFCPLib.RequestStatusValue;
+const BFCPUser = User;
+const Primitive = Primitive;
+const AttributeName = AttributeName;
+const RequestStatusValue = RequestStatusValue;
 
 let userId = 1;
 let conferenceId = 1;
