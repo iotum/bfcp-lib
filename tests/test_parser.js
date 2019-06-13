@@ -1,5 +1,6 @@
 const assert = require('assert');
 const BFCPLib = require('../out/index');
+const helper = require('./helper');
 
 const testTemplate = {
   id: '',
@@ -260,11 +261,7 @@ const main = () => {
     testFloorRequestStatus,
   ].forEach(test => {
     console.info(`TEST [${test.id}]: BEGIN`);
-    const input = Uint8Array.from(
-      test.data.split(/\s/).filter(v => v).map(hex => parseInt(hex, 16))
-    );
-    const msg = BFCPLib.Parser.parseMessage(input);
-    // console.debug(msg);
+    const msg = BFCPLib.Parser.parseMessage(helper.fromHex(test.data));
     test.verify(msg);
     console.info(`TEST [${test.id}]: PASS`);
   });

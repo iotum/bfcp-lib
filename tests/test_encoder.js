@@ -1,5 +1,6 @@
 const assert = require('assert');
 const BFCPLib = require('../out/index');
+const helper = require('./helper');
 
 const testTemplate = {
   id: '',
@@ -24,9 +25,9 @@ const testHello = {
 const testHelloAck = {
   id: 'HelloAck',
   request: `
-    20 0b 00 01 00 00 00 02  00 02 00 03 05 04 00 01`,
+    20 0b 00 01 00 00 00 02  00 03 00 03-05 04 00 01`,
   output: `
-    30 0c 00 06 00 00 00 02  00 02 00 03<17 0b 01 02
+    30 0c 00 06 00 00 00 02  00 03 00 03<17 0b 01 02
     07 08 0b 0c 10 11 12>00 <15 0a 02 04 06 0a 14 16
     22 24>00 00`,
   create: (msg) => {
@@ -66,20 +67,6 @@ const testFloorRelease = {
   },
 };
 
-const toHex = (values = [], groupSize = 8) => {
-  const bytes = values.map(v => v.toString(16).padStart(2, '0').slice(-2));
-  if (groupSize) {
-    for (let idx = Math.floor(bytes.length / groupSize); idx >= 0; idx--) {
-      bytes.splice((idx + 1) * groupSize, 0, '');
-    }
-  }
-  return bytes.join(' ');
-};
-
-const fromHex = (hex = '') => {
-  return hex.replace(/[^0-9a-f]/ig, ' ').split(/\s/).filter(v => v).map(hex => parseInt(hex, 16));
-};
-
 const main = () => {
   [
     testHello,
@@ -88,14 +75,18 @@ const main = () => {
     testFloorRelease,
   ].forEach(test => {
     console.info(`TEST [${test.id}]: BEGIN`);
-    const request = test.request ? fromHex(test.request) : undefined;
-    const expected = fromHex(test.output);
+    const request = test.request ? helper.fromHex(test.request) : undefined;
+    const expected = helper.fromHex(test.output);
     const msg = test.create(
       request ? BFCPLib.Parser.parseMessage(request) : undefined
     );
     // console.debug(msg);
     const actual = msg.encode();
-    assert.deepStrictEqual(actual, expected, `\nActual:\n${toHex(actual)}\nExpected\n${toHex(expected)}`);
+    assert.deepStrictEqual(
+      actual,
+      expected,
+      `\nActual:\n${helper.toHex(actual)}\nExpected\n${helper.toHex(expected)}`
+    );
     console.info(`TEST [${test.id}]: PASS`);
   });
 };
