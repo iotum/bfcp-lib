@@ -82,6 +82,13 @@ export abstract class Attribute {
     this._mandatory = mandatary;
   }
 
+  public getContentAttriute(type: Type) {
+    if (this.content instanceof Array) {
+      return this.content.find((a: Attribute) => a.type === type);
+    }
+    return null;
+  }
+
   /**
    * Encodes this Attribute instance from object oriented format to the binary
    * format.
@@ -309,13 +316,13 @@ export class RequestStatus extends Attribute {
 
   public get requestStatus() {
     if (this.content instanceof Array) {
-      return this.content[0];
+      return this.content[0] as number;
     }
   }
 
   public get queuePosition() {
     if (this.content instanceof Array) {
-      return this.content[1];
+      return this.content[1] as number;
     }
   }
 }
@@ -353,7 +360,7 @@ export class ErrorCode extends Attribute {
 
   public get errorCode() {
     if (this.content instanceof Array) {
-      return this.content[0];
+      return this.content[0] as number;
     }
   }
 }
@@ -454,7 +461,7 @@ export class BeneficiaryInformation extends Attribute {
 
   public get beneficiaryId() {
     if (this.content instanceof Array) {
-      return this.content[0];
+      return this.content[0] as number;
     }
   }
 }
@@ -486,8 +493,18 @@ export class FloorRequestInformation extends Attribute {
 
   public get floorRequestId() {
     if (this.content instanceof Array) {
-      return this.content[0];
+      return this.content[0] as number;
     }
+  }
+
+  public get floorId() {
+    const frs = super.getContentAttriute(Type.FloorRequestStatus) as FloorRequestStatus;
+    return frs ? frs.floorId : null;
+  }
+
+  public get requestStatus() {
+    const ors = super.getContentAttriute(Type.OverallRequestStatus) as OverallRequestStatus;
+    return ors ? ors.requestStatus : null;
   }
 }
 
@@ -511,7 +528,7 @@ export class RequestedByInformation extends Attribute {
 
   public get requestedById() {
     if (this.content instanceof Array) {
-      return this.content[0];
+      return this.content[0] as number;
     }
   }
 }
@@ -542,7 +559,7 @@ export class FloorRequestStatus extends Attribute {
 
   public get floorId() {
     if (this.content instanceof Array) {
-      return this.content[0];
+      return this.content[0] as number;
     }
   }
 }
@@ -572,8 +589,16 @@ export class OverallRequestStatus extends Attribute {
 
   public get floorRequestId() {
     if (this.content instanceof Array) {
-      return this.content[0];
+      return this.content[0] as number;
     }
+  }
+
+  public get requestStatus() {
+    const rs = super.getContentAttriute(Type.RequestStatus) as RequestStatus;
+    return rs ? {
+      queuePosition: rs.queuePosition,
+      requestStatus: rs.requestStatus,
+    } : null;
   }
 }
 

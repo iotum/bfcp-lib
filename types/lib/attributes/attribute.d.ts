@@ -30,6 +30,7 @@ export declare abstract class Attribute {
     format: Format;
     content: Content;
     mandatory: boolean;
+    getContentAttriute(type: Type): string | number | Attribute;
     /**
      * Encodes this Attribute instance from object oriented format to the binary
      * format.
@@ -120,8 +121,8 @@ export declare class RequestStatus extends Attribute {
      * @param queuePosition The queue position
      */
     constructor(requestStatus: RequestStatusValue, queuePosition?: number);
-    readonly requestStatus: string | number | Attribute;
-    readonly queuePosition: string | number | Attribute;
+    readonly requestStatus: number;
+    readonly queuePosition: number;
 }
 /**
  * ErrorCode class is an abstraction of the ErrorCode attribute
@@ -136,7 +137,7 @@ export declare class ErrorCode extends Attribute {
      * @param errorCode The error code
      */
     constructor(errorCode: Err, errorInfo?: string);
-    readonly errorCode: string | number | Attribute;
+    readonly errorCode: number;
 }
 export declare class ErrorInfo extends Attribute {
     static decode(data: Uint8Array): ErrorInfo;
@@ -172,7 +173,7 @@ export declare class UserUri extends Attribute {
 export declare class BeneficiaryInformation extends Attribute {
     static decode(data: Uint8Array): BeneficiaryInformation;
     constructor(beneficiaryId: number, attributes?: Attribute[]);
-    readonly beneficiaryId: string | number | Attribute;
+    readonly beneficiaryId: number;
 }
 /**
  * The FLOOR-REQUEST-INFORMATION attribute is a grouped attribute that
@@ -188,7 +189,12 @@ export declare class FloorRequestInformation extends Attribute {
      * @param requestStatus  The request status
      */
     constructor(floorRequestId: number, attributes?: Attribute[]);
-    readonly floorRequestId: string | number | Attribute;
+    readonly floorRequestId: number;
+    readonly floorId: number;
+    readonly requestStatus: {
+        queuePosition: number;
+        requestStatus: number;
+    };
 }
 /**
  * The REQUESTED-BY-INFORMATION attribute is a grouped attribute that
@@ -197,7 +203,7 @@ export declare class FloorRequestInformation extends Attribute {
 export declare class RequestedByInformation extends Attribute {
     static decode(data: Uint8Array): RequestedByInformation;
     constructor(requestedById: number, attributes?: Attribute[]);
-    readonly requestedById: string | number | Attribute;
+    readonly requestedById: number;
 }
 /**
  * The FLOOR-REQUEST-STATUS attribute is a grouped attribute that
@@ -212,7 +218,7 @@ export declare class FloorRequestStatus extends Attribute {
      * @param requestStatus The request status
      */
     constructor(floorId: number, attributes?: Attribute[]);
-    readonly floorId: string | number | Attribute;
+    readonly floorId: number;
 }
 /**
  * The OVERALL-REQUEST-STATUS attribute is a grouped attribute that
@@ -226,7 +232,11 @@ export declare class OverallRequestStatus extends Attribute {
      * @param floorRequestId The request status
      */
     constructor(floorRequestId: number, attributes?: Attribute[]);
-    readonly floorRequestId: string | number | Attribute;
+    readonly floorRequestId: number;
+    readonly requestStatus: {
+        queuePosition: number;
+        requestStatus: number;
+    };
 }
 /**
  * SupportedAttributes class is an abstraction of the SupportedAttributes
