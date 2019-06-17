@@ -1,3 +1,10 @@
+# Iotum
+
+```shell
+npm run build
+npm run test
+```
+
 # bfcp-lib
 bfcp-lib is a simple library for the Binary Floor Control Protocol, as
 defined in the [RFC 4582](https://tools.ietf.org/html/rfc4582).

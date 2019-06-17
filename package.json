@@ -11,7 +11,7 @@
     "lint": "tslint --project .",
     "prebuild": "tsc",
     "build": "browserify ./out -s BFCPLib -o bfcp-lib.js",
-    "test": ""
+    "test": "node ./tests/test_parser.js && node ./tests/test_encoder.js"
   },
   "dependencies": {},
   "devDependencies": {
