@@ -6,10 +6,12 @@
     "type": "git",
     "url": "git+https://github.com/jerry2013/bfcp-lib.git"
   },
+  "main": "./bfcp-lib.js",
   "scripts": {
     "clean": "rm -rf out/lib",
     "lint": "tslint --project .",
-    "prebuild": "tsc",
+    "prebuild": "tsc --downlevelIteration",
+    "prepublish": "npm run build",
     "build": "browserify ./out -s BFCPLib -o bfcp-lib.js",
     "test": "node ./tests/test_parser.js && node ./tests/test_encoder.js"
   },
