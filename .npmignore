@@ -2,5 +2,9 @@ lib
 out
 samples
 tests
+types
 README.md
+Makefile
+tsconfig.json
+tslint.json
 node_modules
