@@ -55,7 +55,7 @@ export class Message {
    */
   public getAttribute(attributeName: Name): Attribute {
     for (const attribute of this.attributes) {
-      if (attribute.constructor.name === attributeName) {
+      if (attribute.type === Type[attributeName]) {
         return attribute;
       }
     }
