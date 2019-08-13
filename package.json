@@ -10,7 +10,6 @@
   "scripts": {
     "clean": "rm -rf out/lib",
     "lint": "tslint --project .",
-    "prepare": "npm run build",
     "prebuild": "tsc",
     "prepublish": "npm run build",
     "build": "browserify ./out -s BFCPLib -o bfcp-lib.js",
